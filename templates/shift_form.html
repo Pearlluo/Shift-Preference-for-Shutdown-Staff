@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shift Form</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #eef3f8 0%, #f7f9fc 100%);
+    color: #222;
+}
+
+.page {
+    min-height: 100vh;
+    padding: 24px 16px;
+}
+
+.card {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    margin: 0 0 8px 0;
+    font-size: 30px;
+    font-weight: 700;
+    color: #1f2d3d;
+}
+
+.note {
+    margin: 0 0 20px 0;
+    color: #5b6470;
+    line-height: 1.5;
+    font-size: 15px;
+}
+
+.error-box,
+.success-box {
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    font-size: 15px;
+}
+
+.error-box {
+    background: #fff1f0;
+    border: 1px solid #f2b8b5;
+    color: #a12020;
+}
+
+.success-box {
+    background: #eef9f0;
+    border: 1px solid #b7e3c0;
+    color: #1f5f2c;
+    display: none;
+}
+
+.toolbar {
+    margin-bottom: 18px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: #1f6feb;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    min-width: 130px;
+    box-shadow: 0 4px 12px rgba(31, 111, 235, 0.25);
+    transition: 0.2s ease;
+}
+
+button:hover {
+    background: #1557b0;
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    background: #8aaee8;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.loading {
+    display: none;
+    margin-bottom: 18px;
+    color: #1f6feb;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.desktop-wrap {
+    display: block;
+    overflow-x: auto;
+    border: 1px solid #e6ebf2;
+    border-radius: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+    font-size: 14px;
+}
+
+th, td {
+    border-bottom: 1px solid #edf1f5;
+    padding: 14px 16px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background: #f8fafc;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+tbody tr:nth-child(even) {
+    background: #fcfdff;
+}
+
+tbody tr:hover {
+    background: #f5f9ff;
+}
+
+th:nth-child(1), td:nth-child(1) { width: 34%; }
+th:nth-child(2), td:nth-child(2) { width: 18%; }
+th:nth-child(3), td:nth-child(3) { width: 28%; }
+th:nth-child(4), td:nth-child(4) { width: 20%; }
+
+.name-input,
+.readonly-input,
+.shift-select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #cfd8e3;
+    background: #fff;
+    font-size: 15px;
+    color: #1f2937;
+    outline: none;
+}
+
+.name-input:focus,
+.shift-select:focus {
+    border-color: #1f6feb;
+    box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.15);
+}
+
+.readonly-input {
+    background: #f8fafc;
+    color: #475569;
+}
+
+.summary {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: #f7f8fa;
+    border-radius: 12px;
+    display: none;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* mobile cards */
+.mobile-wrap {
+    display: none;
+}
+
+.mobile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.mobile-row {
+    border: 1px solid #e6ebf2;
+    border-radius: 16px;
+    padding: 14px;
+    background: #fcfdff;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+}
+
+.mobile-field {
+    margin-bottom: 12px;
+}
+
+.mobile-field:last-child {
+    margin-bottom: 0;
+}
+
+.mobile-label {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .page {
+        padding: 14px;
+    }
+
+    .card {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .note {
+        font-size: 14px;
+    }
+
+    .toolbar {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    .desktop-wrap {
+        display: none;
+    }
+
+    .mobile-wrap {
+        display: block;
+    }
+}
+</style>
+</head>
+<body>
+<div class="page">
+    <div class="card">
+        <h1>Shift Form</h1>
+
+        <p class="note">
+            Search by full name, then Employee ID and Position will fill automatically.<br>
+            Shift options: <strong>DS</strong>, <strong>NS</strong>, <strong>ANY</strong>.
+        </p>
+
+        {% if error %}
+            <div class="error-box">{{ error }}</div>
+        {% endif %}
+
+        <div id="successBox" class="success-box"></div>
+        <div id="loadingText" class="loading">Submitting data, please wait...</div>
+
+        <div class="toolbar">
+            <button type="button" onclick="addRow()">+ Add Row</button>
+            <button type="button" id="submitBtn" onclick="submitData()">Submit</button>
+        </div>
+
+        <datalist id="employeeOptions">
+            {% for row in employees %}
+            <option
+                value="{{ row.full_name }}"
+                data-employee-id="{{ row.employee_id }}"
+                data-position-name="{{ row.position_name }}">
+            </option>
+            {% endfor %}
+        </datalist>
+
+        <!-- Desktop -->
+        <div class="desktop-wrap">
+            <table id="desktopTable">
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Employee ID</th>
+                        <th>Position</th>
+                        <th>Shift</th>
+                    </tr>
+                </thead>
+                <tbody id="desktopBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Mobile -->
+        <div class="mobile-wrap">
+            <div id="mobileList" class="mobile-list"></div>
+        </div>
+
+        <div id="summary" class="summary"></div>
+    </div>
+</div>
+
+<script>
+const employees = {{ employees|tojson }};
+const employeeMap = {};
+employees.forEach(e => {
+    employeeMap[(e.full_name || "").trim().toUpperCase()] = e;
+});
+
+function createDesktopRow() {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+        <td>
+            <input class="name-input" list="employeeOptions" placeholder="Type full name">
+        </td>
+        <td>
+            <input class="readonly-input employee-id" type="text" readonly>
+        </td>
+        <td>
+            <input class="readonly-input position-name" type="text" readonly>
+        </td>
+        <td>
+            <select class="shift-select">
+                <option value="">Select Shift</option>
+                <option value="DS">DS</option>
+                <option value="NS">NS</option>
+                <option value="ANY">ANY</option>
+            </select>
+        </td>
+    `;
+    bindRow(tr);
+    return tr;
+}
+
+function createMobileRow() {
+    const div = document.createElement("div");
+    div.className = "mobile-row";
+    div.innerHTML = `
+        <div class="mobile-field">
+            <div class="mobile-label">Full Name</div>
+            <input class="name-input" list="employeeOptions" placeholder="Type full name">
+        </div>
+        <div class="mobile-field">
+            <div class="mobile-label">Employee ID</div>
+            <input class="readonly-input employee-id" type="text" readonly>
+        </div>
+        <div class="mobile-field">
+            <div class="mobile-label">Position</div>
+            <input class="readonly-input position-name" type="text" readonly>
+        </div>
+        <div class="mobile-field">
+            <div class="mobile-label">Shift</div>
+            <select class="shift-select">
+                <option value="">Select Shift</option>
+                <option value="DS">DS</option>
+                <option value="NS">NS</option>
+                <option value="ANY">ANY</option>
+            </select>
+        </div>
+    `;
+    bindRow(div);
+    return div;
+}
+
+function bindRow(container) {
+    const nameInput = container.querySelector(".name-input");
+    const employeeIdInput = container.querySelector(".employee-id");
+    const positionInput = container.querySelector(".position-name");
+
+    nameInput.addEventListener("input", function() {
+        const key = this.value.trim().toUpperCase();
+        const matched = employeeMap[key];
+
+        if (matched) {
+            employeeIdInput.value = matched.employee_id || "";
+            positionInput.value = matched.position_name || "";
+        } else {
+            employeeIdInput.value = "";
+            positionInput.value = "";
+        }
+    });
+}
+
+function addRow() {
+    document.getElementById("desktopBody").appendChild(createDesktopRow());
+    document.getElementById("mobileList").appendChild(createMobileRow());
+}
+
+function collectRowsFromVisibleLayout() {
+    const isMobile = window.innerWidth <= 768;
+    const containers = isMobile
+        ? document.querySelectorAll("#mobileList .mobile-row")
+        : document.querySelectorAll("#desktopBody tr");
+
+    const rows = [];
+
+    containers.forEach(container => {
+        const name = container.querySelector(".name-input").value.trim();
+        const employeeId = container.querySelector(".employee-id").value.trim();
+        const position = container.querySelector(".position-name").value.trim();
+        const shift = container.querySelector(".shift-select").value.trim();
+
+        if (name !== "" || shift !== "") {
+            rows.push({
+                employee_id: employeeId,
+                full_name: name,
+                position_name: position,
+                shift: shift
+            });
+        }
+    });
+
+    return rows;
+}
+
+async function submitData() {
+    const button = document.getElementById("submitBtn");
+    const loadingText = document.getElementById("loadingText");
+    const successBox = document.getElementById("successBox");
+    const summary = document.getElementById("summary");
+
+    successBox.style.display = "none";
+    summary.style.display = "none";
+
+    const rows = collectRowsFromVisibleLayout();
+
+    if (rows.length === 0) {
+        alert("Please enter at least one employee and select shift.");
+        return;
+    }
+
+    const invalidRows = rows.filter(r => !r.employee_id || !r.shift);
+    if (invalidRows.length > 0) {
+        alert("Some rows are incomplete. Please choose a valid full name and shift.");
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Submitting...";
+    loadingText.style.display = "block";
+
+    try {
+        const response = await fetch("/submit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ rows: rows })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Submit failed.");
+        }
+
+        successBox.textContent = result.message;
+        successBox.style.display = "block";
+
+        summary.innerHTML = `
+            <strong>Success:</strong> ${result.success_count}<br>
+            <strong>Failed:</strong> ${result.failed_count}
+        `;
+        summary.style.display = "block";
+
+    } catch (error) {
+        alert("Error: " + error.message);
+    } finally {
+        button.disabled = false;
+        button.textContent = "Submit";
+        loadingText.style.display = "none";
+    }
+}
+
+addRow();
+</script>
+</body>
+</html>

@@ -1,69 +1,70 @@
 # Shift Preference for Shutdown Staff
 
-This project is a web-based internal tool for managing shift preferences (DS / NS / ANY) for shutdown employees.
+An internal web tool for managing shift preferences (DS / NS / ANY) for shutdown employees. Loads employees directly from OPMS, lets users assign shifts, and writes selections back to OPMS via API.
 
-It integrates with OPMS API to:
-- Retrieve employee data
-- Allow users to select preferred shifts
-- Write the selected shift back to OPMS
+## How it works
 
----
+```mermaid
+flowchart TD
+    OPMS[(OPMS API\nSite ID 17)] -->|Fetch all employees| APP[app.py - Flask]
+    APP -->|Render employee list| FORM[shift_form.html\nSearch + select shift]
+    FORM -->|Submit DS / NS / ANY| APP
+    APP -->|PATCH employee.additionalID8| OPMS
 
-##  Features
+    classDef opms fill:#fef3c7,stroke:#d97706,color:#92400e
+    classDef app fill:#f3f4f6,stroke:#6b7280,color:#111827
+    classDef form fill:#dbeafe,stroke:#2563eb,color:#1e40af
+
+    class OPMS opms
+    class APP app
+    class FORM form
+```
+
+## Features
 
 - Search employee by full name
-- Auto-fill Employee ID and Position
-- Select shift (DS / NS / ANY)
-- Submit multiple employees at once
-- Write data back to OPMS via API
+- Auto-fill Employee ID and Position from OPMS
+- Select shift per employee — DS, NS, or ANY
+- Submit multiple employees in one batch
+- Writes shift back to OPMS `additionalID8` field via PATCH
+- ASSETS team employees automatically excluded
 - Mobile-friendly interface
 
----
+## Tech Stack
 
-##  Tech Stack
+- Python / Flask
+- OPMS API (OAuth2 client credentials)
+- Azure Web App
+- GitHub Actions
 
-- Python (Flask)
-- HTML / CSS / JavaScript
-- OPMS API
-- Azure Web App (deployment)
-- GitHub (version control)
-
----
-
-##  Project Structure
-
-
-.
-├── app.py
-├── requirements.txt
+```
+## Project Structure
+shift-preference/
+├── app.py                  Flask app — fetch employees, handle submit, PATCH OPMS
 ├── templates/
-│ └── shift_form.html
+│   └── shift_form.html     Search + shift selection form
+└── requirements.txt
+```
 
+## Local Setup
 
----
-
-##  Setup (Local)
-
-### 1. Install dependencies
-
-```bash
+Install dependencies:
 pip install -r requirements.txt
-2. Set environment variables
-OPMS_CLIENT_ID=your_client_id
-OPMS_CLIENT_SECRET=your_secret
-3. Run the app
-python app.py
-☁️ Deployment (Azure)
-Runtime: Python 3.11
-Startup Command:
-gunicorn app:app
-Environment Variables (Azure Configuration):
-OPMS_CLIENT_ID
-OPMS_CLIENT_SECRET
-Notes
-Do NOT upload .env to GitHub
-Ensure correct API permissions in OPMS
-Only valid shifts are accepted: DS, NS, ANY
 
-Author
-Pearl Luo
+Set environment variables:
+OPMS_CLIENT_ID=your_client_id
+OPMS_CLIENT_SECRET=your_client_secret
+
+Run the app:
+python app.py
+
+## Azure Deployment
+
+- Runtime: Python 3.11
+- Startup command: `gunicorn app:app`
+- Environment variables set in Azure App Service Configuration: `OPMS_CLIENT_ID`, `OPMS_CLIENT_SECRET`
+
+## Rules
+
+- Only valid shifts accepted: `DS`, `NS`, `ANY`
+- ASSETS team employees are excluded from the list

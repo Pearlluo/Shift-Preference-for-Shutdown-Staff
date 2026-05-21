@@ -20,6 +20,10 @@ flowchart TD
     class FORM form
 ```
 
+## Preview
+
+![Shift Preference Form](Shift%20Preference.png)
+
 ## Features
 
 - Search employee by full name
